@@ -18,3 +18,4 @@ pytesseract
 pdfplumber
 gtts
 streamlit-option-menu
+python-docx
