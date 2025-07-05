@@ -2,39 +2,39 @@
 
 /* -------- VARIABLES -------- */
 :root {
-    --primary: #4f46e5;       /* violet bleu, style GPT */
-    --secondary: #4338ca;     /* violet foncé */
-    --accent: #6366f1;        /* accent bleu clair */
-    --light: #f9fafb;         /* fond clair */
-    --dark: #111827;          /* texte foncé */
-    --gray-light: #e5e7eb;    /* gris clair */
-    --gray-dark: #374151;     /* gris foncé */
+    --primary: #4f46e5;
+    --secondary: #4338ca;
+    --accent: #6366f1;
+    --white: #ffffff;
+    --light-gray: #f1f5f9;
+    --gray-light: #e5e7eb;
+    --gray-dark: #374151;
+    --text-dark: #111827;
 }
 
 /* THEME CLAIR */
 [data-theme="light"] {
-    --bg-color: var(--light);
-    --text-color: var(--dark);
+    --bg-color: #ffffff; /* FOND BLANC */
+    --text-color: var(--text-dark);
     --card-bg: #ffffff;
-    --bubble-user: #dbeafe;   /* bleu clair */
-    --bubble-bot: #f3f4f6;    /* gris très clair */
+    --bubble-user: #dbeafe;
+    --bubble-bot: #f3f4f6;
     --button-bg: var(--primary);
     --button-hover: var(--secondary);
 }
 
 /* THEME SOMBRE */
 [data-theme="dark"] {
-    --bg-color: #1f2937;      /* gris très foncé */
+    --bg-color: #1f2937;
     --text-color: #f9fafb;
     --card-bg: #111827;
-    --bubble-user: #3b82f6;   /* bleu vif */
-    --bubble-bot: #374151;    /* gris foncé */
+    --bubble-user: #3b82f6;
+    --bubble-bot: #374151;
     --button-bg: #4338ca;
     --button-hover: #6366f1;
 }
 
 /* -------- GLOBAL -------- */
-
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -48,14 +48,15 @@ body {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: 16px;
     margin-bottom: 2rem;
-    box-shadow: 0 8px 15px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
     text-align: center;
-    font-weight: 700;
-    letter-spacing: 1.2px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
+/* -------- CHAT -------- */
 .chat-history {
     max-height: calc(100vh - 280px);
     overflow-y: auto;
@@ -64,56 +65,56 @@ body {
     scroll-behavior: smooth;
 }
 
-/* -------- CHAT BUBBLES -------- */
-
 .chat-container {
     display: flex;
     align-items: flex-end;
     gap: 1rem;
     margin-bottom: 1rem;
-    max-width: 80%;
+    max-width: 90%;
 }
 
 .bubble {
     padding: 1rem 1.4rem;
-    border-radius: 20px;
-    line-height: 1.5;
-    word-wrap: break-word;
+    border-radius: 18px;
     font-size: 1rem;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-    transition: background-color 0.3s ease;
+    line-height: 1.5;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+    transition: background-color 0.3s ease, transform 0.2s ease;
     position: relative;
     user-select: text;
 }
 
-/* Bulles utilisateur à droite */
+/* Utilisateur */
 .user {
     margin-left: auto;
     background-color: var(--bubble-user);
-    color: var(--dark);
+    color: var(--text-dark);
     border-bottom-right-radius: 6px;
-    animation: fadeInRight 0.4s ease forwards;
+    animation: fadeInRight 0.3s ease-in-out forwards;
 }
 
-/* Bulles bot à gauche */
+/* Bot */
 .bot {
     background-color: var(--bubble-bot);
     color: var(--text-color);
     border-bottom-left-radius: 6px;
-    animation: fadeInLeft 0.4s ease forwards;
+    animation: fadeInLeft 0.3s ease-in-out forwards;
+}
+
+.bubble:hover {
+    transform: scale(1.02);
 }
 
 /* Avatar */
 .avatar {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 0 5px rgb(0 0 0 / 0.15);
+    box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
 }
 
-/* -------- INPUT AREA -------- */
-
+/* -------- INPUT -------- */
 .input-area {
     position: fixed;
     bottom: 0;
@@ -121,8 +122,8 @@ body {
     right: 0;
     background-color: var(--card-bg);
     padding: 1rem 1.5rem;
-    box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.1);
-    z-index: 9999;
+    box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
+    z-index: 100;
     display: flex;
     gap: 1rem;
     align-items: center;
@@ -134,7 +135,8 @@ body {
     border: 1px solid var(--gray-light);
     padding: 0.75rem 1.2rem;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
 }
 
 .input-area input[type="text"]:focus {
@@ -156,76 +158,52 @@ button {
 
 button:hover {
     background-color: var(--button-hover);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
-/* -------- FONCTIONNALITÉS -------- */
-
+/* -------- FEATURES -------- */
 .feature-card {
     background-color: var(--card-bg);
-    border-radius: 15px;
-    padding: 1.8rem 1.5rem;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.05);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
     text-align: center;
-    transition: box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
-    box-shadow: 0 8px 20px rgb(79 70 229 / 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgb(79 70 229 / 0.15);
 }
 
-.feature-icon {
-    font-size: 2.5rem;
-    color: var(--accent);
-    margin-bottom: 1rem;
-}
-
-/* Image dans feature */
 .feature-card img {
     max-height: 80px;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.1));
     border-radius: 12px;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 /* -------- ANIMATIONS -------- */
-
 @keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Scrollbar custom (light theme) */
-[data-theme="light"] .chat-history::-webkit-scrollbar {
+/* -------- SCROLL -------- */
+[data-theme="light"] .chat-history::-webkit-scrollbar,
+[data-theme="dark"]  .chat-history::-webkit-scrollbar {
     width: 8px;
 }
 
 [data-theme="light"] .chat-history::-webkit-scrollbar-thumb {
     background-color: var(--gray-light);
     border-radius: 4px;
-}
-
-/* Scrollbar custom (dark theme) */
-[data-theme="dark"] .chat-history::-webkit-scrollbar {
-    width: 8px;
 }
 
 [data-theme="dark"] .chat-history::-webkit-scrollbar-thumb {
