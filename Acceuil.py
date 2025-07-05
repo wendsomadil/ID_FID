@@ -13,11 +13,11 @@ from chatbot.memory import ChatMemory
 from streamlit_option_menu import option_menu
 from chatbot.config import ASSETS_DIRECTORY, PROJECT_ROOT
 
-# Initialisation de la session et du chemin
+# Initialisation
 init_session()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'chatbot')))
 
-# Configuration de la page
+# Configuration Streamlit
 st.set_page_config(
     page_title="Assistance IA Télécom",
     page_icon="📱",
@@ -25,24 +25,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Charger le CSS externe depuis le dossier css
-css_path = os.path.join(PROJECT_ROOT, 'css', 'styles.css')
+# Charger CSS
 def load_css(path: str):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+            css = f.read()
+            st.markdown(f"<style data-theme='light'>{css}</style>", unsafe_allow_html=True)
     else:
         st.error(f"Fichier CSS introuvable : {path}")
 
+css_path = os.path.join(PROJECT_ROOT, 'css', 'styles.css')
 load_css(css_path)
 
-# Charger les données et initialiser la mémoire et les paramètres
+# Session state init
 texts = load_text_data()
 st.session_state.setdefault("chat_memory", ChatMemory())
 st.session_state.setdefault("theme", "light")
 st.session_state.setdefault("lang", "fr")
 
-# Helpers
+# Utilitaires
 def encode_image_to_base64(image_path: str) -> str:
     if os.path.exists(image_path):
         with open(image_path, "rb") as img:
@@ -56,8 +57,8 @@ def lire_texte_audio(text: str):
         tts.save(tmp.name)
         st.audio(open(tmp.name, "rb").read(), format="audio/mpeg")
 
-# Charger les images depuis le dossier assets
-assets_path = os.path.join(os.path.dirname(__file__), "assets")
+# Images
+assets_path = ASSETS_DIRECTORY
 ia_logo      = encode_image_to_base64(os.path.join(assets_path, "ia_telecom.png"))
 citadel_logo = encode_image_to_base64(os.path.join(assets_path, "citadel.png"))
 hero_img     = encode_image_to_base64(os.path.join(assets_path, "telecom_hero.jpg"))
@@ -65,7 +66,7 @@ feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecommunicati
 feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.png"))
 feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
 
-# Texte multilingue
+# Texte selon langue
 def load_texts_and_features():
     if st.session_state.lang == "fr":
         return (
@@ -88,13 +89,13 @@ def load_texts_and_features():
             "Send",
             "🪩 Clear conversation",
             [
-                {"title": "Comprehensive Regulation", "description": "Instant access to all telecom regulations",       "image": feature1_img},
-                {"title": "Smart Assistant",           "description": "Accurate AI-based answers",                    "image": feature2_img},
-                {"title": "Multilingual",              "description": "French & English support",                    "image": feature3_img},
+                {"title": "Comprehensive Regulation", "description": "Instant access to all telecom regulations", "image": feature1_img},
+                {"title": "Smart Assistant",           "description": "Accurate AI-based answers",                "image": feature2_img},
+                {"title": "Multilingual",              "description": "French & English support",                "image": feature3_img},
             ]
         )
 
-# Charger textes et features
+# Chargement
 title, subtitle, placeholder, submit_txt, clear_txt, features = load_texts_and_features()
 
 # En-tête
@@ -115,7 +116,7 @@ with st.form("chat_form", clear_on_submit=True):
         submitted = st.form_submit_button(submit_txt)
         if st.form_submit_button(clear_txt):
             st.session_state.chat_memory.clear_memory()
-            st.experimental_rerun()
+            st.rerun()
 
 # Historique de chat
 chat_container = st.container()
@@ -162,19 +163,18 @@ if submitted and query:
         warn = "Veuillez entrer une question à 3 mots minimum." if st.session_state.lang == "fr" else "Enter at least 3 words."
         st.warning(warn)
 
-# Affichage des fonctionnalités (placé en bas de page)
+# Fonctionnalités
 st.markdown("### ✨ Fonctionnalités")
 cols = st.columns(3)
 for i, feat in enumerate(features):
     with cols[i]:
         st.markdown(f"""
         <div class="feature-card">
-          <img src="data:image/png;base64,{feat['image']}" style="height:80px;margin-bottom:1rem;" />
+          <img src="data:image/png;base64,{feat['image']}" />
           <h3>{feat['title']}</h3>
           <p>{feat['description']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-# Appliquer le thème
-theme = st.session_state.get("theme", "light")
-st.markdown(f"<body data-theme='{theme}'>", unsafe_allow_html=True)
+# Appliquer thème light explicitement
+st.markdown("<body data-theme='light'>", unsafe_allow_html=True)
