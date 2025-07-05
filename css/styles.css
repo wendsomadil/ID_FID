@@ -1,185 +1,234 @@
 /* styles.css */
 
-/* === Variables de thème === */
+/* -------- VARIABLES -------- */
 :root {
-  --primary-color: #1e3a5f;
-  --accent-color: #3498db;
-  --bg-color: #f5f7fa;
-  --text-color: #2c3e50;
-  --hover-shadow: rgba(0, 0, 0, 0.15);
+    --primary: #4f46e5;       /* violet bleu, style GPT */
+    --secondary: #4338ca;     /* violet foncé */
+    --accent: #6366f1;        /* accent bleu clair */
+    --light: #f9fafb;         /* fond clair */
+    --dark: #111827;          /* texte foncé */
+    --gray-light: #e5e7eb;    /* gris clair */
+    --gray-dark: #374151;     /* gris foncé */
 }
 
-/* === Navigation réduite pour motions sensibles === */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+/* THEME CLAIR */
+[data-theme="light"] {
+    --bg-color: var(--light);
+    --text-color: var(--dark);
+    --card-bg: #ffffff;
+    --bubble-user: #dbeafe;   /* bleu clair */
+    --bubble-bot: #f3f4f6;    /* gris très clair */
+    --button-bg: var(--primary);
+    --button-hover: var(--secondary);
 }
 
-/* === Base === */
+/* THEME SOMBRE */
+[data-theme="dark"] {
+    --bg-color: #1f2937;      /* gris très foncé */
+    --text-color: #f9fafb;
+    --card-bg: #111827;
+    --bubble-user: #3b82f6;   /* bleu vif */
+    --bubble-bot: #374151;    /* gris foncé */
+    --button-bg: #4338ca;
+    --button-hover: #6366f1;
+}
+
+/* -------- GLOBAL -------- */
+
 body {
-    font-family: 'Roboto', Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 1rem;
-    line-height: 1.6;
+    padding: 0 1rem 4rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* === Titres === */
-h1.main-title {
+.header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 15px rgba(79, 70, 229, 0.3);
     text-align: center;
-    font-size: 2.8rem;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-h2.subtitle {
-    text-align: center;
-    font-size: 1.25rem;
-    color: #34495e;
-    margin-bottom: 1.5rem;
-    font-weight: 300;
+    font-weight: 700;
+    letter-spacing: 1.2px;
 }
 
-/* === En-tête logos === */
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.header-container img {
-  height: 40px;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-.header-container img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px var(--hover-shadow);
+.chat-history {
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+    scroll-behavior: smooth;
 }
 
-/* === Boîtes de chat === */
+/* -------- CHAT BUBBLES -------- */
+
 .chat-container {
     display: flex;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
-}
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    margin-right: 0.5rem;
-}
-.bubble {
-    padding: 0.75rem 1rem;
-    border-radius: 16px;
-    max-width: 70%;
-    font-size: 1rem;
-    line-height: 1.4;
-    word-wrap: break-word;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-.bubble.user {
-    background-color: #e0f2fe;
-    color: var(--text-color);
-    align-self: flex-end;
-}
-.bubble.bot {
-    background-color: #f1f5f9;
-    color: var(--text-color);
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    max-width: 80%;
 }
 
-/* === Formulaires et boutons === */
-input[type="text"], textarea {
-    width: 100%;
-    padding: 0.75rem;
+.bubble {
+    padding: 1rem 1.4rem;
+    border-radius: 20px;
+    line-height: 1.5;
+    word-wrap: break-word;
     font-size: 1rem;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+    transition: background-color 0.3s ease;
+    position: relative;
+    user-select: text;
 }
-input:focus, textarea:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 6px rgba(52,152,219,0.3);
+
+/* Bulles utilisateur à droite */
+.user {
+    margin-left: auto;
+    background-color: var(--bubble-user);
+    color: var(--dark);
+    border-bottom-right-radius: 6px;
+    animation: fadeInRight 0.4s ease forwards;
+}
+
+/* Bulles bot à gauche */
+.bot {
+    background-color: var(--bubble-bot);
+    color: var(--text-color);
+    border-bottom-left-radius: 6px;
+    animation: fadeInLeft 0.4s ease forwards;
+}
+
+/* Avatar */
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgb(0 0 0 / 0.15);
+}
+
+/* -------- INPUT AREA -------- */
+
+.input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--card-bg);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.input-area input[type="text"] {
+    flex-grow: 1;
+    border-radius: 25px;
+    border: 1px solid var(--gray-light);
+    padding: 0.75rem 1.2rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.input-area input[type="text"]:focus {
+    border-color: var(--accent);
     outline: none;
+    box-shadow: 0 0 8px var(--accent);
 }
-button, .stButton button {
-    background-color: var(--accent-color) !important;
-    color: #fff !important;
-    font-size: 1rem;
+
+button {
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.3rem;
+    border-radius: 25px;
     font-weight: 600;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.75rem 1.5rem !important;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
-button:hover, .stButton button:hover {
-    background-color: #2563eb !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
 }
 
-/* === Spinners et indicateurs === */
-.typing-indicator {
-    display: inline-flex;
-    align-items: center;
-    background: #e0e0e0;
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    color: #555;
-    margin-bottom: 0.5rem;
-}
-.typing-indicator span {
-    display: inline-block;
-    margin: 0 2px;
-    width: 6px;
-    height: 6px;
-    background: #555;
-    border-radius: 50%;
-    animation: blink 1.4s infinite both;
-}
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+/* -------- FONCTIONNALITÉS -------- */
 
-/* === Animations clés === */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes blink {
-    0%, 80%, 100% { opacity: 0; transform: scale(0.7); }
-    40% { opacity: 1; transform: scale(1); }
-}
-
-/* === Expander historique === */
-.stExpander {
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+.feature-card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.8rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.05);
+    text-align: center;
     transition: box-shadow 0.3s ease;
-    margin: 1.5rem 0;
-}
-.stExpander:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* === Responsive === */
-@media screen and (max-width: 768px) {
-    .header-container, .chat-container {
-        flex-direction: column;
-        align-items: center;
+.feature-card:hover {
+    box-shadow: 0 8px 20px rgb(79 70 229 / 0.2);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+/* Image dans feature */
+.feature-card img {
+    max-height: 80px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.1));
+    border-radius: 12px;
+}
+
+/* -------- ANIMATIONS -------- */
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
     }
-    .bubble { max-width: 90%; }
-    h1.main-title { font-size: 2rem; }
-    h2.subtitle { font-size: 1rem; }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scrollbar custom (light theme) */
+[data-theme="light"] .chat-history::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="light"] .chat-history::-webkit-scrollbar-thumb {
+    background-color: var(--gray-light);
+    border-radius: 4px;
+}
+
+/* Scrollbar custom (dark theme) */
+[data-theme="dark"] .chat-history::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="dark"] .chat-history::-webkit-scrollbar-thumb {
+    background-color: var(--gray-dark);
+    border-radius: 4px;
 }
