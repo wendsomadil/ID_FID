@@ -57,7 +57,7 @@ def lire_texte_audio(text: str):
         st.audio(open(tmp.name, "rb").read(), format="audio/mpeg")
 
 # Charger les images depuis le dossier assets
-assets_path = ASSETS_DIRECTORY
+assets_path = os.path.join(os.path.dirname(__file__), "assets")
 ia_logo      = encode_image_to_base64(os.path.join(assets_path, "ia_telecom.png"))
 citadel_logo = encode_image_to_base64(os.path.join(assets_path, "citadel.png"))
 hero_img     = encode_image_to_base64(os.path.join(assets_path, "telecom_hero.jpg"))
