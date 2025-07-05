@@ -9,7 +9,7 @@ load_dotenv()
 PDF_DIRECTORY    = "C:/Users/HP/Citadel/id-fid-3/reglementation"
 EXCEL_DIRECTORY  = "C:/Users/HP/Citadel/id-fid-3/output/excel"
 WORD_DIRECTORY   = "C:/Users/HP/Citadel/id-fid-3/output/word"
-ASSETS_DIRECTORY = "C:/Users/HP/Citadel/id-fid-3/assets"
+ASSETS_DIRECTORY = "C:/Users/HP/Citadel/ID-FID/assets"
 
 # Chemin du fichier FAISS à la racine du projet
 PROJECT_ROOT     = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
