@@ -1,6 +1,7 @@
 # chatbot/utils.py
 import os
 import pandas as pd
+import streamlit as st
 import fitz
 import pdfplumber
 from docx import Document
@@ -85,3 +86,12 @@ def save_text_for_faiss(output_dir=None):
                 f.write(content)
         except Exception as e:
             print(f"[Save] Impossible d'écrire {txt_path} : {e}")
+
+def init_session():
+    from chatbot.memory import ChatMemory
+    if "lang" not in st.session_state:
+        st.session_state.lang = "fr"
+    if "theme" not in st.session_state:
+        st.session_state.theme = "light"
+    if "chat_memory" not in st.session_state:
+        st.session_state.chat_memory = ChatMemory()
