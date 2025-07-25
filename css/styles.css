@@ -272,8 +272,23 @@ button:hover {
     flex-direction: column;
     max-width: 100%;
   }
+
   .input-area {
     flex-direction: column;
-    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .bubble {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .feature-card {
+    padding: 1rem;
+  }
+
+  .header {
+    padding: 1rem;
+    font-size: 1.2rem;
   }
 }
