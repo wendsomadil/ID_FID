@@ -49,7 +49,7 @@ def encode_image_to_base64(image_path: str) -> str:
     return ""
 
 assets_path = os.path.join(os.path.dirname(__file__), "assets")
-feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecommunication.png"))
+feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecom.png"))
 feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.png"))
 feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
 
