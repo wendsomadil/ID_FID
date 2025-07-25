@@ -18,6 +18,7 @@ from chatbot.utils import load_text_data, init_session
 from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
 from db import insert_message, get_all_messages
+from components.chat_input.chat_input import chat_input
 
 # Initialisation
 init_session()
@@ -209,18 +210,16 @@ components.html(f"""
 """, height=150)
 
 # Traitement de la requête
-if submitted and query:
-    if len(query.split()) >= 3:
-        with st.spinner("💡 L'assistant réfléchit..."):
-            results = search_faiss(query, top_n=5)
-            context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
-            answer = get_answer(query, context)
-            st.session_state.chat_memory.add_to_memory(query, answer)
-            lire_texte_audio(answer)
-        st.rerun()
-    else:
-        warn = "Veuillez entrer une question à 3 mots minimum." if st.session_state.lang == "fr" else "Enter at least 3 words."
-        st.warning(warn)
+
+query = chat_input(placeholder=placeholder, key="custom_input")
+if query and len(query.split()) >= 3:
+    with st.spinner("💡 L'assistant réfléchit..."):
+        results = search_faiss(query, top_n=5)
+        context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
+        answer = get_answer(query, context)
+        st.session_state.chat_memory.add_to_memory(query, answer)
+        lire_texte_audio(answer)
+    st.rerun()
 
 # Analyse de fichier texte
 if uploaded_file:
