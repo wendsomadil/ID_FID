@@ -3,5 +3,16 @@ function sendMessage() {
   Streamlit.setComponentValue(input);
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const inputField = document.getElementById("chatInput");
+
+  inputField.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Empêche le saut de ligne
+      sendMessage();
+    }
+  });
+});
+
 Streamlit.setComponentReady();
 Streamlit.setFrameHeight(100);
