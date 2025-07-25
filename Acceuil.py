@@ -54,7 +54,7 @@ feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.pn
 feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
 
 features = [
-    {"title": "Réglementation Complète", "description": "Accès instantané à toute la réglementation des télécommunications", "image": feature1_img},
+    {"title": "Réglementation Complète", "description": "Accès instantané à toute la réglementation télécomms", "image": feature1_img},
     {"title": "Assistant Intelligent", "description": "Réponses précises basées sur l'IA", "image": feature2_img},
     {"title": "Multilingue", "description": "Disponible en français et en anglais", "image": feature3_img},
 ]
