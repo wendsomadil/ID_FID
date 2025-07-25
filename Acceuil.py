@@ -10,6 +10,7 @@ import plotly.express as px
 from gtts import gTTS
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
 
 # Modules internes
 from chatbot.rag_pipeline import get_answer, search_faiss
@@ -134,14 +135,78 @@ with chat_container:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Zone de saisie en bas
-with st.container():
-    st.markdown("<div class='input-area'>", unsafe_allow_html=True)
-    col1, col2 = st.columns([8, 1])
-    with col1:
-        query = st.text_input("", placeholder=placeholder, label_visibility="collapsed")
-    with col2:
-        submitted = st.button(submit_txt)
-    st.markdown("</div>", unsafe_allow_html=True)
+components.html(f"""
+<style>
+  .chat-input-container {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    max-width: 100%;
+    margin-top: 1rem;
+    font-family: 'Segoe UI', sans-serif;
+  }}
+
+  .chat-input-container img {{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  }}
+
+  .chat-input-container input {{
+    flex-grow: 1;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: box-shadow 0.3s ease;
+  }}
+
+  .chat-input-container input:focus {{
+    outline: none;
+    box-shadow: 0 0 8px var(--accent);
+    border-color: var(--accent);
+  }}
+
+  .chat-input-container button {{
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }}
+
+  .chat-input-container button:hover {{
+    background-color: var(--button-hover);
+    transform: scale(1.05);
+  }}
+
+  @media (max-width: 600px) {{
+    .chat-input-container {{
+      flex-direction: column;
+      align-items: stretch;
+    }}
+
+    .chat-input-container button {{
+      width: 100%;
+    }}
+  }}
+</style>
+
+<div class="chat-input-container">
+  <img src="https://avatars.githubusercontent.com/u0&v=4
+  <input type="text" placeholder="{placeholder}" />
+  <button>{submit_txt}</button>
+</div>
+""", height=150)
 
 # Traitement de la requête
 if submitted and query:
