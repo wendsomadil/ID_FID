@@ -8,6 +8,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from gtts import gTTS
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 # Modules internes
 from chatbot.rag_pipeline import get_answer, search_faiss
@@ -114,7 +116,9 @@ with chat_container:
             <div class='bubble user'>{msg['user']}</div>
           </div>
           <div class='chat-container'>
-            <div class='bubble bot'>{msg['bot']}</div>
+            <div class='bubble bot'>{msg['bot']}
+              <button onclick="navigator.clipboard.writeText('{msg['bot']}')" style="margin-left:10px;">📋</button>
+            </div>
           </div>
         """, unsafe_allow_html=True)
         if st.button(f"🎧 Écouter réponse {idx+1}", key=f"tts_{idx}"):
@@ -151,6 +155,14 @@ if uploaded_file:
     word_count = len(content.split())
     st.success(f"📄 Le fichier contient {word_count} mots.")
 
+    # Wordcloud
+    st.markdown("### ☁️ Nuage de mots")
+    wordcloud = WordCloud(width=800, height=300, background_color='white').generate(content)
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.imshow(wordcloud, interpolation='bilinear')
+    ax.axis("off")
+    st.pyplot(fig)
+
 # Graphique interactif
 st.markdown("### 📊 Statistiques des sujets")
 data = pd.DataFrame({
@@ -172,3 +184,10 @@ for i, feat in enumerate(features):
           <p>{feat['description']}</p>
         </div>
         """, unsafe_allow_html=True)
+
+# Export historique
+if st.sidebar.button("💾 Exporter l'historique"):
+    export_text = ""
+    for msg in st.session_state.chat_memory.history:
+        export_text += f"👤 {msg['user']}\n🤖 {msg['bot']}\n\n"
+    st.sidebar.download_button("📥 Télécharger .txt", export_text, file_name="historique_chat.txt")
