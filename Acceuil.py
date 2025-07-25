@@ -36,7 +36,7 @@ def load_css(path: str):
     else:
         st.error(f"Fichier CSS introuvable : {path}")
 
-css_path = os.path.join(PROJECT_ROOT, 'css', 'Styles_modified.css')
+css_path = os.path.join(PROJECT_ROOT, 'css', 'Styles.css')
 load_css(css_path)
 
 # Encodage des images
