@@ -20,3 +20,4 @@ gtts
 streamlit-option-menu
 python-docx
 plotly.express
+WordCloud
