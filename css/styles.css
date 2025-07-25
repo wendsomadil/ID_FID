@@ -210,3 +210,59 @@ button:hover {
     background-color: var(--gray-dark);
     border-radius: 4px;
 }
+
+/* --- Enhancements added by Copilot --- */
+
+/* Glassmorphism effect for chat bubbles */
+.bubble {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.6); /* Light theme */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Dark theme override for glassmorphism */
+[data-theme="dark"] .bubble {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient animation for header */
+.header {
+  background: linear-gradient(270deg, var(--primary), var(--secondary));
+  background-size: 400% 400%;
+  animation: gradientFlow 8s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced hover effect on bubbles */
+.bubble:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.03);
+}
+
+/* Floating scroll-to-bottom button */
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 999;
+  transition: background-color 0.3s ease;
+}
+
+.scroll-to-bottom:hover {
+  background-color: var(--button-hover);
+}
