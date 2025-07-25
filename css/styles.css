@@ -266,3 +266,14 @@ button:hover {
 .scroll-to-bottom:hover {
   background-color: var(--button-hover);
 }
+
+@media (max-width: 600px) {
+  .chat-container {
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .input-area {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
