@@ -1,5 +1,4 @@
 # acceuil.py
-
 import os
 import sys
 import time
@@ -14,7 +13,7 @@ from gtts import gTTS
 from chatbot.rag_pipeline import get_answer, search_faiss
 from chatbot.utils import load_text_data, init_session
 from chatbot.memory import ChatMemory
-from chatbot.config import ASSETS_DIRECTORY, PROJECT_ROOT
+from chatbot.config import PROJECT_ROOT
 
 # Initialisation
 init_session()
@@ -40,6 +39,24 @@ def load_css(path: str):
 css_path = os.path.join(PROJECT_ROOT, 'css', 'Styles_modified.css')
 load_css(css_path)
 
+# Encodage des images
+def encode_image_to_base64(image_path: str) -> str:
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img:
+            return base64.b64encode(img.read()).decode()
+    return ""
+
+assets_path = os.path.join(os.path.dirname(__file__), "assets")
+feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecommunication.png"))
+feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.png"))
+feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
+
+features = [
+    {"title": "Réglementation Complète", "description": "Accès instantané à toute la réglementation des télécommunications", "image": feature1_img},
+    {"title": "Assistant Intelligent", "description": "Réponses précises basées sur l'IA", "image": feature2_img},
+    {"title": "Multilingue", "description": "Disponible en français et en anglais", "image": feature3_img},
+]
+
 # Session state init
 texts = load_text_data()
 st.session_state.setdefault("chat_memory", ChatMemory())
@@ -59,7 +76,7 @@ st.session_state.lang = st.sidebar.radio("Langue", ["fr", "en"])
 uploaded_file = st.sidebar.file_uploader("📎 Envoyer un fichier texte", type=["txt"])
 
 # Texte selon langue
-def load_texts_and_features():
+def load_texts():
     if st.session_state.lang == "fr":
         return (
             "Assistance IA Télécom 📱",
@@ -77,7 +94,7 @@ def load_texts_and_features():
             "🪩 Clear conversation"
         )
 
-title, subtitle, placeholder, submit_txt, clear_txt = load_texts_and_features()
+title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
 # En-tête
 st.markdown(f"""
@@ -143,3 +160,15 @@ data = pd.DataFrame({
 fig = px.bar(data, x="Sujet", y="Questions", title="Sujets les plus demandés")
 st.plotly_chart(fig)
 
+# Fonctionnalités visuelles
+st.markdown("### ✨ Fonctionnalités")
+cols = st.columns(3)
+for i, feat in enumerate(features):
+    with cols[i]:
+        st.markdown(f"""
+        <div class="feature-card">
+          <img src="data:image/png;base64,{feat['image']}" />
+          <h3>{feat['title']}</h3>
+          <p>{feat['description']}</p>
+        </div>
+        """, unsafe_allow_html=True)
