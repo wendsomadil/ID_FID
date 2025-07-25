@@ -16,6 +16,7 @@ from chatbot.rag_pipeline import get_answer, search_faiss
 from chatbot.utils import load_text_data, init_session
 from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
+from db import insert_message, get_all_messages
 
 # Initialisation
 init_session()
@@ -97,6 +98,13 @@ def load_texts():
         )
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
+
+# Après chaque réponse :
+insert_message(query, answer)
+
+# Pour afficher l’historique depuis la base :
+for user, bot, ts in get_all_messages():
+    st.markdown(f"**👤 {user}**  \n**🤖 {bot}**  \n*🕒 {ts}*")
 
 # En-tête
 st.markdown(f"""
