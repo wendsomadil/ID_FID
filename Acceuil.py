@@ -74,8 +74,13 @@ st.set_page_config(
     page_title="Assistance IA Télécom",
     page_icon="📱",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
+
+# Meta tag mobile
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+""", unsafe_allow_html=True)
 
 # Charger CSS
 def load_css(path: str):
@@ -149,7 +154,7 @@ def load_texts():
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
-# En-tête stylisé avec image de fond
+# En-tête stylisé
 st.markdown(f"""
 <div style="background-image: url('data:image/png;base64,{feature4_img}');
              background-size: cover;
@@ -164,29 +169,28 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Afficher l’historique depuis la base
+# Affichage du chat
 chat_container = st.container()
 with chat_container:
     st.markdown('<div class="chat-history">', unsafe_allow_html=True)
     for idx, msg in enumerate(st.session_state.chat_memory.history):
         st.markdown(f"""
             <div class='chat-container'>
-            <div class='bubble user'>{msg['user']}</div>
+              <div class='bubble user'>{msg['user']}</div>
             </div>
             <div class='chat-container'>
-            <div class='bubble bot'>{msg['bot']}
+              <div class='bubble bot'>{msg['bot']}
                 <button onclick="navigator.clipboard.writeText('{msg['bot']}')" style="margin-left:10px;">📋</button>
-            </div>
+              </div>
             </div>
         """, unsafe_allow_html=True)
         if st.button(f"🎧 Écouter réponse {idx+1}", key=f"tts_{idx}"):
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Zone de saisie en bas et traitement
+# Zone de saisie
 def process_query():
     microphone_input()
-
     query = st.chat_input(placeholder=placeholder, key="native_chat_input")
 
     if "suggested_query" in st.session_state:
@@ -203,15 +207,14 @@ def process_query():
             st.rerun()
         except Exception as e:
             st.error(f"❌ Erreur : {e}")
+
 process_query()
 
-# Analyse de fichier texte
+# Wordcloud
 if uploaded_file:
     content = uploaded_file.read().decode("utf-8")
     word_count = len(content.split())
     st.success(f"📄 Le fichier contient {word_count} mots.")
-
-    # Wordcloud
     st.markdown("### ☁️ Nuage de mots")
     wordcloud = WordCloud(width=800, height=300, background_color='white').generate(content)
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -219,7 +222,7 @@ if uploaded_file:
     ax.axis("off")
     st.pyplot(fig)
 
-# Graphique interactif
+# Statistiques
 st.markdown("### 📊 Statistiques des sujets")
 data = pd.DataFrame({
     "Sujet": ["5G", "Fibre", "Roaming", "Facturation", "Support"],
@@ -228,18 +231,16 @@ data = pd.DataFrame({
 fig = px.bar(data, x="Sujet", y="Questions", title="Sujets les plus demandés")
 st.plotly_chart(fig)
 
-# Fonctionnalités visuelles
+# Fonctionnalités
 st.markdown("### ✨ Fonctionnalités")
-cols = st.columns(3)
-for i, feat in enumerate(features):
-    with cols[i]:
-        st.markdown(f"""
-        <div class="feature-card">
-          <img src="data:image/png;base64,{feat['image']}" />
-          <h3>{feat['title']}</h3>
-          <p>{feat['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
+for feat in features:
+    st.markdown(f"""
+    <div class="feature-card">
+      <img src="data:image/png;base64,{feat['image']}" />
+      <h3>{feat['title']}</h3>
+      <p>{feat['description']}</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Export historique
 if st.sidebar.button("💾 Exporter l'historique"):
@@ -247,3 +248,10 @@ if st.sidebar.button("💾 Exporter l'historique"):
     for msg in st.session_state.chat_memory.history:
         export_text += f"👤 {msg['user']}\n🤖 {msg['bot']}\n\n"
     st.sidebar.download_button("📥 Télécharger .txt", export_text, file_name="historique_chat.txt")
+
+# Retour haut de page
+st.markdown("""
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="#top" style="text-decoration: none; color: var(--accent-color); font-weight: bold;">⬆️ Retour en haut</a>
+</div>
+""", unsafe_allow_html=True)
