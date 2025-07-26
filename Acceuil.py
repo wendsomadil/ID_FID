@@ -67,7 +67,7 @@ def microphone_input():
         }
     }, 500);
     </script>
-    """, height=0)
+""", height=0)
 
 # Configuration Streamlit
 st.set_page_config(
