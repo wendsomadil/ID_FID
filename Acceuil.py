@@ -115,18 +115,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-
-# Zone de saisie interactive
-query = chat_input(placeholder=placeholder, key="custom_input")
-if query and len(query.split()) >= 3:
-    with st.spinner("💡 L'assistant réfléchit..."):
-        results = search_faiss(query, top_n=5)
-        context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
-        answer = get_answer(query, context)
-        st.session_state.chat_memory.add_to_memory(query, answer)
-        lire_texte_audio(answer)
-        insert_message(query, answer)
-    st.rerun()
 # Historique de chat
 chat_container = st.container()
 with chat_container:
