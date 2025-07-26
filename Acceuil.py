@@ -19,10 +19,36 @@ from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
 from db import insert_message, get_all_messages
 
-# Initialisation
+# Initialisation de la session
 init_session()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'chatbot')))
 
+# Configuration Streamlit
+st.set_page_config(
+    page_title="Assistance IA Télécom",
+    page_icon="📱",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+# Meta tag mobile
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+""", unsafe_allow_html=True)
+
+# Charger CSS
+def load_css(path: str):
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            css = f.read()
+            st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    else:
+        st.error(f"Fichier CSS introuvable : {path}")
+
+css_path = os.path.join(PROJECT_ROOT, 'css', 'styles.css')
+load_css(css_path)
+
+# Helper : microphone
 def microphone_input():
     components.html("""
     <script>
@@ -69,52 +95,7 @@ def microphone_input():
     </script>
 """, height=0)
 
-# Configuration Streamlit
-st.set_page_config(
-    page_title="Assistance IA Télécom",
-    page_icon="📱",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
-# Meta tag mobile
-st.markdown("""
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-""", unsafe_allow_html=True)
-
-# Charger CSS
-def load_css(path: str):
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            css = f.read()
-            st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-    else:
-        st.error(f"Fichier CSS introuvable : {path}")
-
-css_path = os.path.join(PROJECT_ROOT, 'css', 'styles.css')
-load_css(css_path)
-
-# Encodage des images
-def encode_image_to_base64(image_path: str) -> str:
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img:
-            return base64.b64encode(img.read()).decode()
-    return ""
-
-assets_path = os.path.join(os.path.dirname(__file__), "assets")
-feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecom.png"))
-feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.png"))
-feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
-feature4_img = encode_image_to_base64(os.path.join(assets_path, "citadel.png"))
-
-features = [
-    {"title": "Réglementation", "description": "Un accès instantané", "image": feature1_img},
-    {"title": "Assistant Intelligent", "description": "Réponses précises basées sur l'IA", "image": feature2_img},
-    {"title": "Multilingue", "description": "Disponible en français et en anglais", "image": feature3_img},
-]
-
 # Session state init
-texts = load_text_data()
 st.session_state.setdefault("chat_memory", ChatMemory())
 st.session_state.setdefault("lang", "fr")
 
@@ -154,22 +135,46 @@ def load_texts():
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
-# En-tête stylisé
+# Encodage des images
+def encode_image_to_base64(image_path: str) -> str:
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img:
+            return base64.b64encode(img.read()).decode()
+    return ""
+
+# Chemin vers les assets
+assets_path = os.path.join(os.path.dirname(__file__), '..', 'assets')
+
+# Après avoir encodé feature4_img via :
+feature4_img = encode_image_to_base64(os.path.join(assets_path, "citadel.png"))
+
+# Header (avec image de fond injectée)
 st.markdown(f"""
-<div style="background-image: url('data:image/png;base64,{feature4_img}');
-             background-size: cover;
-             background-position: center;
-             padding: 2rem;
-             border-radius: 12px;
-             text-align: center;
-             color: white;
-             box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-  <h1 style="font-size: 2.5rem; font-weight: bold; text-shadow: 1px 1px 2px black;">{title}</h1>
-  <p style="font-size: 1.2rem; text-shadow: 1px 1px 2px black;">{subtitle}</p>
+<div class="header" style="
+     background-image: url('data:image/png;base64,{feature4_img}');
+     background-size: cover;
+     background-position: center;
+     padding: 2rem;
+     border-radius: 12px;
+     text-align: center;
+     color: white;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+">
+  <h1 style="
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+  ">{title}</h1>
+  <p style="
+      font-size: 1.2rem;
+      text-shadow: 1px 1px 2px black;
+      margin-top: 0.5rem;
+  ">{subtitle}</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Affichage du chat
+
+# Chat display
 chat_container = st.container()
 with chat_container:
     st.markdown('<div class="chat-history">', unsafe_allow_html=True)
@@ -188,7 +193,7 @@ with chat_container:
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Zone de saisie
+# Input & RAG pipeline
 def process_query():
     microphone_input()
     query = st.chat_input(placeholder=placeholder, key="native_chat_input")
@@ -221,37 +226,3 @@ if uploaded_file:
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
     st.pyplot(fig)
-
-# Statistiques
-st.markdown("### 📊 Statistiques des sujets")
-data = pd.DataFrame({
-    "Sujet": ["5G", "Fibre", "Roaming", "Facturation", "Support"],
-    "Questions": [12, 9, 7, 5, 3]
-})
-fig = px.bar(data, x="Sujet", y="Questions", title="Sujets les plus demandés")
-st.plotly_chart(fig)
-
-# Fonctionnalités
-st.markdown("### ✨ Fonctionnalités")
-for feat in features:
-    st.markdown(f"""
-    <div class="feature-card">
-      <img src="data:image/png;base64,{feat['image']}" />
-      <h3>{feat['title']}</h3>
-      <p>{feat['description']}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Export historique
-if st.sidebar.button("💾 Exporter l'historique"):
-    export_text = ""
-    for msg in st.session_state.chat_memory.history:
-        export_text += f"👤 {msg['user']}\n🤖 {msg['bot']}\n\n"
-    st.sidebar.download_button("📥 Télécharger .txt", export_text, file_name="historique_chat.txt")
-
-# Retour haut de page
-st.markdown("""
-<div style="text-align: center; margin-top: 2rem;">
-    <a href="#top" style="text-decoration: none; color: var(--accent-color); font-weight: bold;">⬆️ Retour en haut</a>
-</div>
-""", unsafe_allow_html=True)
