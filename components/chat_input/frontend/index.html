@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat Input</title>
+  <script src="https://cdn.jsdelivr.net/npm/@streamlit/component-lib@latest/dist/index.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    input {
+      flex-grow: 1;
+      padding: 0.8rem;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      min-width: 200px;
+    }
+    button {
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3730a3;
+    }
+    .suggestions {
+      margin-top: 10px;
+    }
+    .suggestion {
+      background-color: #f3f3f3;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin: 4px;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .mic-button {
+      background-color: #e5e5e5;
+      border: none;
+      border-radius: 50%;
+      padding: 0.6rem;
+      cursor: pointer;
+    }
+    @media (max-width: 600px) {
+      .chat-input-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      input, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-input-container">
+    <input id="chatInput" type="text" placeholder="Votre message ici..." />
+    <button onclick="sendMessage()">Envoyer</button>
+    <button class="mic-button" onclick="startDictation()">🎤</button>
+  </div>
+
+  <div class="suggestions" id="suggestions"></div>
+
+  <script>
+    const streamlit = window.streamlit;
+
+    function sendMessage() {
+      const input = document.getElementById("chatInput").value;
+      streamlit.setComponentValue(input);
+    }
+
+    document.getElementById("chatInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    function startDictation() {
+      if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = currentLang === "fr" ? "fr-FR" : "en-US";
+        recognition.onresult = function(event) {
+          document.getElementById("chatInput").value = event.results[0][0].transcript;
+        };
+        recognition.start();
+      } else {
+        alert("La dictée vocale n'est pas supportée sur ce navigateur.");
+      }
+    }
+
+    function renderSuggestions(lang) {
+      const suggestions = lang === "fr"
+        ? ["Quels sont les tarifs ?", "Comment activer la 4G ?", "Quelles sont les règles de roaming ?"]
+        : ["What are the rates?", "How to activate 4G?", "What are the roaming rules?"];
+
+      const container = document.getElementById("suggestions");
+      container.innerHTML = "";
+      suggestions.forEach(text => {
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.innerText = text;
+        div.onclick = () => {
+          document.getElementById("chatInput").value = text;
+          sendMessage();
+        };
+        container.appendChild(div);
+      });
+    }
+
+    let currentLang = "fr";
+
+    streamlit.setComponentReady();
+
+    streamlit.onRender((data) => {
+      const placeholder = data.args.placeholder || "Votre message ici...";
+      currentLang = data.args.lang || "fr";
+      document.getElementById("chatInput").placeholder = placeholder;
+      renderSuggestions(currentLang);
+    });
+  </script>
+</body>
+</html>
