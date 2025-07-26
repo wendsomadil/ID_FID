@@ -220,6 +220,7 @@ if query and len(query.split()) >= 3:
         answer = get_answer(query, context)
         st.session_state.chat_memory.add_to_memory(query, answer)
         lire_texte_audio(answer)
+        insert_message(query, answer)
     st.rerun()
 
 # Analyse de fichier texte
