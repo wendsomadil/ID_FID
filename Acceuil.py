@@ -151,7 +151,7 @@ with chat_container:
 
 # Traitement de la requête
 
-query = chat_input(placeholder=placeholder, key="custom_input")
+query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}")
 if query and len(query.split()) >= 3:
     with st.spinner("💡 L'assistant réfléchit..."):
         results = search_faiss(query, top_n=5)
