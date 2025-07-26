@@ -134,11 +134,9 @@ with chat_container:
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Zone de saisie en bas
-
 # Traitement de la requête
 
-query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}")
+query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}", lang=st.session_state.lang)
 if query and len(query.split()) >= 3:
     with st.spinner("💡 L'assistant réfléchit..."):
         results = search_faiss(query, top_n=5)
