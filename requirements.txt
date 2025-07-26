@@ -6,10 +6,10 @@ pandas
 openpyxl
 pdf2image
 Pillow
-sentence_transformers
+sentence-transformers
 faiss-cpu
-torch 
-torchvision 
+torch
+torchvision
 torchaudio
 numpy
 pdfminer.six
@@ -19,6 +19,5 @@ pdfplumber
 gtts
 streamlit-option-menu
 python-docx
-plotly.express
-WordCloud
-streamlit.components.v1
+plotly
+wordcloud
