@@ -102,9 +102,6 @@ def load_texts():
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
-# Après chaque réponse :
-insert_message(query, answer)
-
 # Pour afficher l’historique depuis la base :
 for user, bot, ts in get_all_messages():
     st.markdown(f"**👤 {user}**  \n**🤖 {bot}**  \n*🕒 {ts}*")
