@@ -1,293 +1,226 @@
 /* styles.css */
 
-/* -------- VARIABLES -------- */
+/* === Variables === */
 :root {
-    --primary: #4f46e5;
-    --secondary: #4338ca;
-    --accent: #6366f1;
-    --white: #ffffff;
-    --light-gray: #f1f5f9;
-    --gray-light: #e5e7eb;
-    --gray-dark: #374151;
-    --text-dark: #111827;
+  --primary-color: #1f2937;
+  --accent-color: #6366f1;
+  --bg-color: #f9fafb;
+  --text-color: #111827;
+  --bot-bg: #e0e7ff;
+  --user-bg: #d1fae5;
+  --shadow: rgba(0, 0, 0, 0.1);
 }
 
-/* THEME CLAIR */
-[data-theme="light"] {
-    --bg-color: #ffffff; /* FOND BLANC */
-    --text-color: var(--text-dark);
-    --card-bg: #ffffff;
-    --bubble-user: #dbeafe;
-    --bubble-bot: #f3f4f6;
-    --button-bg: var(--primary);
-    --button-hover: var(--secondary);
-}
-
-/* THEME SOMBRE */
-[data-theme="dark"] {
-    --bg-color: #1f2937;
-    --text-color: #f9fafb;
-    --card-bg: #111827;
-    --bubble-user: #3b82f6;
-    --bubble-bot: #374151;
-    --button-bg: #4338ca;
-    --button-hover: #6366f1;
-}
-
-/* -------- GLOBAL -------- */
+/* === Base === */
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0 1rem 4rem 1rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+body.dark-mode {
+  --bg-color: #1f2937;
+  --text-color: #f9fafb;
+  --bot-bg: #374151;
+  --user-bg: #4b5563;
+  --accent-color: #818cf8;
+}
+body.dark-mode .feature-card {
+  background-color: #2d2f36;
+  color: #f9fafb;
+}
+body.dark-mode .feature-card p {
+  color: #d1d5db;
+}
+body.dark-mode .bubble {
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
 }
 
+/* === Header === */
 .header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 2rem;
-    border-radius: 16px;
-    margin-bottom: 2rem;
-    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-    text-align: center;
-    font-weight: bold;
-    letter-spacing: 1px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.95;
 }
 
-@media (max-width: 600px) {
+/* === Chat bubbles === */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.bubble {
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  max-width: 80%;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px var(--shadow);
+  animation: fadeIn 0.3s ease-in-out;
+}
+.bubble.user {
+  background-color: var(--user-bg);
+  align-self: flex-end;
+  border-bottom-right-radius: 0;
+}
+.bubble.bot {
+  background-color: var(--bot-bg);
+  align-self: flex-start;
+  border-bottom-left-radius: 0;
+}
+
+/* === Buttons === */
+button, .stButton button {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.2rem !important;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+button:hover, .stButton button:hover {
+  background-color: #4f46e5 !important;
+  transform: translateY(-2px);
+}
+
+/* === File uploader and sidebar === */
+.stSidebar {
+  background-color: #f3f4f6;
+}
+.stSidebar .css-1d391kg {
+  padding: 1rem;
+}
+
+/* === Wordcloud and charts === */
+img, canvas {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* === Feature cards === */
+.feature-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+.feature-card img {
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+.feature-card h3 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.2rem;
+}
+.feature-card p {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === Responsive === */
+@media screen and (max-width: 768px) {
+  .bubble {
+    max-width: 95%;
+  }
+  .header h1 {
+    font-size: 2rem;
+  }
+  .header p {
+    font-size: 1rem;
+  }
+}
+@media screen and (max-width: 480px) {
+  .feature-card {
+    padding: 0.5rem;
+  }
+  .feature-card img {
+    height: 48px;
+  }
+  .header h1 {
+    font-size: 1.5rem;
+  }
   .chat-container {
-    flex-direction: column;
-    max-width: 100%;
+    padding: 0 1rem;
   }
-
-  .input-area {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
   .bubble {
     font-size: 0.9rem;
-    padding: 0.8rem 1rem;
-  }
-
-  .feature-card {
-    padding: 1rem;
-  }
-
-  .header {
-    padding: 1rem;
-    font-size: 1.2rem;
+    padding: 0.5rem 0.75rem;
   }
 }
-/* -------- CHAT -------- */
-.chat-history {
-    max-height: calc(100vh - 280px);
-    overflow-y: auto;
-    padding-right: 0.5rem;
-    margin-bottom: 1rem;
-    scroll-behavior: smooth;
-}
 
-.chat-container {
-    display: flex;
-    align-items: flex-end;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    max-width: 90%;
-}
-
-.bubble {
-    padding: 1rem 1.4rem;
-    border-radius: 18px;
-    font-size: 1rem;
-    line-height: 1.5;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    position: relative;
-    user-select: text;
-}
-
-/* Utilisateur */
-.user {
-    margin-left: auto;
-    background-color: var(--bubble-user);
-    color: var(--text-dark);
-    border-bottom-right-radius: 6px;
-    animation: fadeInRight 0.3s ease-in-out forwards;
-}
-
-/* Bot */
-.bot {
-    background-color: var(--bubble-bot);
-    color: var(--text-color);
-    border-bottom-left-radius: 6px;
-    animation: fadeInLeft 0.3s ease-in-out forwards;
-}
-
+/* === Supplémentaire === */
 .bubble:hover {
-    transform: scale(1.02);
+  box-shadow: 0 4px 12px var(--shadow);
+  transform: scale(1.01);
 }
-
-/* Avatar */
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
+.chat-input-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--accent-color);
 }
-
-/* -------- INPUT -------- */
-.input-area {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: var(--card-bg);
-    padding: 1rem 1.5rem;
-    box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
-    z-index: 100;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.input-area input[type="text"] {
-    flex-grow: 1;
-    border-radius: 25px;
-    border: 1px solid var(--gray-light);
-    padding: 0.75rem 1.2rem;
-    font-size: 1rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
-}
-
-.input-area input[type="text"]:focus {
-    border-color: var(--accent);
-    outline: none;
-    box-shadow: 0 0 8px var(--accent);
-}
-
-button {
-    background-color: var(--button-bg);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.3rem;
-    border-radius: 25px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: var(--button-hover);
-    transform: translateY(-2px);
-}
-
-/* -------- FEATURES -------- */
-.feature-card {
-    background-color: var(--card-bg);
-    border-radius: 20px;
-    padding: 2rem 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgb(79 70 229 / 0.15);
-}
-
-.feature-card img {
-    max-height: 80px;
-    margin-bottom: 1rem;
-    border-radius: 12px;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
-}
-
-/* -------- ANIMATIONS -------- */
-@keyframes fadeInRight {
-    from { opacity: 0; transform: translateX(30px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fadeInLeft {
-    from { opacity: 0; transform: translateX(-30px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
-/* -------- SCROLL -------- */
-[data-theme="light"] .chat-history::-webkit-scrollbar,
-[data-theme="dark"]  .chat-history::-webkit-scrollbar {
-    width: 8px;
-}
-
-[data-theme="light"] .chat-history::-webkit-scrollbar-thumb {
-    background-color: var(--gray-light);
-    border-radius: 4px;
-}
-
-[data-theme="dark"] .chat-history::-webkit-scrollbar-thumb {
-    background-color: var(--gray-dark);
-    border-radius: 4px;
-}
-
-/* --- Enhancements added by Copilot --- */
-
-/* Glassmorphism effect for chat bubbles */
-.bubble {
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.6); /* Light theme */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Dark theme override for glassmorphism */
-[data-theme="dark"] .bubble {
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Gradient animation for header */
-.header {
-  background: linear-gradient(270deg, var(--primary), var(--secondary));
-  background-size: 400% 400%;
-  animation: gradientFlow 8s ease infinite;
-}
-
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Enhanced hover effect on bubbles */
-.bubble:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: scale(1.03);
-}
-
-/* Floating scroll-to-bottom button */
-.scroll-to-bottom {
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  background-color: var(--button-bg);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 20px;
+.suggestion-button {
+  background-color: var(--bot-bg);
+  color: var(--text-color);
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem 0;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 999;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
-
-.scroll-to-bottom:hover {
-  background-color: var(--button-hover);
+.suggestion-button:hover {
+  background-color: var(--accent-color);
+  color: white;
+}
+.audio-button {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.audio-button:hover {
+  color: #4f46e5;
 }
