@@ -10,6 +10,7 @@ import plotly.express as px
 from gtts import gTTS
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
 
 # Modules internes
 from chatbot.rag_pipeline import get_answer, search_faiss
@@ -18,12 +19,55 @@ from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
 from db import insert_message, get_all_messages
 
-sys.path.append(r"C:\Users\HP\Citadel\chat_input_component")
-from chat_input_component.chat_input_component import chat_input
-
 # Initialisation
 init_session()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'chatbot')))
+
+def microphone_input():
+    components.html("""
+    <script>
+    const waitForInput = setInterval(() => {
+        const inputBox = window.parent.document.querySelector('textarea');
+        if (inputBox) {
+            clearInterval(waitForInput);
+            const micButton = document.createElement('button');
+            micButton.innerText = '🎙️';
+            micButton.style.marginLeft = '8px';
+            micButton.style.padding = '4px 8px';
+            micButton.style.borderRadius = '6px';
+            micButton.style.border = 'none';
+            micButton.style.background = '#6366f1';
+            micButton.style.color = 'white';
+            micButton.style.cursor = 'pointer';
+            micButton.title = 'Dicter votre question';
+
+            micButton.onclick = () => {
+                if (window.hasOwnProperty('webkitSpeechRecognition')) {
+                    const recognition = new webkitSpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    recognition.lang = 'fr-FR';
+                    recognition.start();
+
+                    recognition.onresult = function(e) {
+                        inputBox.value = e.results[0][0].transcript;
+                        inputBox.dispatchEvent(new Event('input', { bubbles: true }));
+                        recognition.stop();
+                    };
+
+                    recognition.onerror = function(e) {
+                        recognition.stop();
+                    };
+                } else {
+                    alert("La reconnaissance vocale n'est pas supportée par ce navigateur.");
+                }
+            };
+
+            inputBox.parentNode.appendChild(micButton);
+        }
+    }, 500);
+    </script>
+    """, height=0)
 
 # Configuration Streamlit
 st.set_page_config(
@@ -56,6 +100,7 @@ assets_path = os.path.join(os.path.dirname(__file__), "assets")
 feature1_img = encode_image_to_base64(os.path.join(assets_path, "telecom.png"))
 feature2_img = encode_image_to_base64(os.path.join(assets_path, "ai-assistant.png"))
 feature3_img = encode_image_to_base64(os.path.join(assets_path, "translation.png"))
+feature4_img = encode_image_to_base64(os.path.join(assets_path, "citadel.png"))
 
 features = [
     {"title": "Réglementation", "description": "Un accès instantané", "image": feature1_img},
@@ -80,6 +125,8 @@ def lire_texte_audio(text: str):
 st.sidebar.title("Paramètres")
 st.session_state.lang = st.sidebar.radio("Langue", ["fr", "en"])
 uploaded_file = st.sidebar.file_uploader("📎 Envoyer un fichier texte", type=["txt"])
+if st.sidebar.toggle("🌙 Mode sombre"):
+    st.markdown("<body class='dark-mode'>", unsafe_allow_html=True)
 
 # Texte selon langue
 def load_texts():
@@ -102,50 +149,75 @@ def load_texts():
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
-# Afficher l’historique depuis la base
-enregistrements = get_all_messages()
-for user, bot, ts in enregistrements:
-    st.markdown(f"**👤 {user}**  \n**🤖 {bot}**  \n*🕒 {ts}*")
-
-# En-tête
+# En-tête stylisé avec image de fond
 st.markdown(f"""
-<div class="header">
-  <h1>{title}</h1>
-  <p>{subtitle}</p>
+<div style="background-image: url('data:image/png;base64,{feature4_img}');
+             background-size: cover;
+             background-position: center;
+             padding: 2rem;
+             border-radius: 12px;
+             text-align: center;
+             color: white;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+  <h1 style="font-size: 2.5rem; font-weight: bold; text-shadow: 1px 1px 2px black;">{title}</h1>
+  <p style="font-size: 1.2rem; text-shadow: 1px 1px 2px black;">{subtitle}</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Historique de chat
+# Afficher l’historique depuis la base
 chat_container = st.container()
 with chat_container:
     st.markdown('<div class="chat-history">', unsafe_allow_html=True)
     for idx, msg in enumerate(st.session_state.chat_memory.history):
         st.markdown(f"""
-          <div class='chat-container'>
+            <div class='chat-container'>
             <div class='bubble user'>{msg['user']}</div>
-          </div>
-          <div class='chat-container'>
-            <div class='bubble bot'>{msg['bot']}
-              <button onclick="navigator.clipboard.writeText('{msg['bot']}')" style="margin-left:10px;">📋</button>
             </div>
-          </div>
+            <div class='chat-container'>
+            <div class='bubble bot'>{msg['bot']}
+                <button onclick="navigator.clipboard.writeText('{msg['bot']}')" style="margin-left:10px;">📋</button>
+            </div>
+            </div>
         """, unsafe_allow_html=True)
         if st.button(f"🎧 Écouter réponse {idx+1}", key=f"tts_{idx}"):
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
+suggestions = {
+    "fr": [
+        "Quels sont les frais de roaming ?",
+        "Comment fonctionne la 5G ?",
+        "Quelles sont les règles de facturation ?"
+    ]
+}
+
+st.markdown("#### 💡 Suggestions")
+for i, q in enumerate(suggestions[st.session_state.lang]):
+    if st.button(q, key=f"suggest_{i}"):
+        st.session_state["suggested_query"] = q
+        st.rerun()
+    st.markdown(f"<div class='suggestion-button'>{q}</div>", unsafe_allow_html=True)
+
 # Zone de saisie en bas et traitement
 def process_query():
-    query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}", lang=st.session_state.lang)
-    if query and len(query.split()) >= 3:
-        with st.spinner("💡 L'assistant réfléchit..."):
-            results = search_faiss(query, top_n=5)
-            context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
-            answer = get_answer(query, context)
-            st.session_state.chat_memory.add_to_memory(query, answer)
-            lire_texte_audio(answer)
-        st.rerun()
+    microphone_input()
 
+    query = st.chat_input(placeholder=placeholder, key="native_chat_input")
+
+    if "suggested_query" in st.session_state:
+        query = st.session_state.pop("suggested_query")
+
+    if query and len(query.split()) >= 3:
+        try:
+            with st.spinner("💡 L'assistant réfléchit..."):
+                results = search_faiss(query, top_n=5)
+                context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
+                answer = get_answer(query, context)
+                st.session_state.chat_memory.add_to_memory(query, answer)
+                lire_texte_audio(answer)
+            st.rerun()
+        except Exception as e:
+            st.error(f"❌ Erreur : {e}")
 process_query()
 
 # Analyse de fichier texte
