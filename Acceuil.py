@@ -183,21 +183,6 @@ with chat_container:
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
-suggestions = {
-    "fr": [
-        "Quels sont les frais de roaming ?",
-        "Comment fonctionne la 5G ?",
-        "Quelles sont les règles de facturation ?"
-    ]
-}
-
-st.markdown("#### 💡 Suggestions")
-for i, q in enumerate(suggestions[st.session_state.lang]):
-    if st.button(q, key=f"suggest_{i}"):
-        st.session_state["suggested_query"] = q
-        st.rerun()
-    st.markdown(f"<div class='suggestion-button'>{q}</div>", unsafe_allow_html=True)
-
 # Zone de saisie en bas et traitement
 def process_query():
     microphone_input()
