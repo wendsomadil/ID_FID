@@ -19,7 +19,6 @@ from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
 from db import insert_message, get_all_messages
 from components.chat_input.chat_input import chat_input
-from components.chat_display.chat_display import chat_display
 
 # Initialisation
 init_session()
