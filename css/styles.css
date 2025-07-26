@@ -6,14 +6,18 @@
   --accent-color: #6366f1;
   --bg-color: #f9fafb;
   --text-color: #111827;
-  --bot-bg: #e0e7ff;
-  --user-bg: #d1fae5;
+  --bot-bg: #dbeafe; /* Meilleur contraste */
+  --user-bg: #bbf7d0; /* Meilleur contraste */
   --shadow: rgba(0, 0, 0, 0.1);
 }
 
 /* === Base === */
+html {
+  font-size: 16px;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   margin: 0;
@@ -35,6 +39,32 @@ body.dark-mode .feature-card p {
 }
 body.dark-mode .bubble {
   box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    padding: 0 1rem;
+  }
+}
+@media screen and (max-width: 480px) {
+  .chat-container {
+    margin: 0.5rem 0;
+  }
+  .bubble {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+.bubble {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* === Focus-visible for keyboard accessibility === */
+button:focus-visible,
+.stButton button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 /* === Header === */
