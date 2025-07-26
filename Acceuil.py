@@ -1,4 +1,4 @@
-# acceuil.py
+# Acceuil.py
 import os
 import sys
 import time
@@ -10,7 +10,6 @@ import plotly.express as px
 from gtts import gTTS
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import streamlit.components.v1 as components
 
 # Modules internes
 from chatbot.rag_pipeline import get_answer, search_faiss
@@ -18,7 +17,9 @@ from chatbot.utils import load_text_data, init_session
 from chatbot.memory import ChatMemory
 from chatbot.config import PROJECT_ROOT
 from db import insert_message, get_all_messages
-from components.chat_input.chat_input import chat_input
+
+sys.path.append(r"C:\Users\HP\Citadel\chat_input_component")
+from chat_input_component.chat_input_component import chat_input
 
 # Initialisation
 init_session()
@@ -101,10 +102,9 @@ def load_texts():
 
 title, subtitle, placeholder, submit_txt, clear_txt = load_texts()
 
-# Après chaque réponse :
-
-# Pour afficher l’historique depuis la base :
-for user, bot, ts in get_all_messages():
+# Afficher l’historique depuis la base
+enregistrements = get_all_messages()
+for user, bot, ts in enregistrements:
     st.markdown(f"**👤 {user}**  \n**🤖 {bot}**  \n*🕒 {ts}*")
 
 # En-tête
@@ -134,17 +134,19 @@ with chat_container:
             lire_texte_audio(msg['bot'])
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Traitement de la requête
+# Zone de saisie en bas et traitement
+def process_query():
+    query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}", lang=st.session_state.lang)
+    if query and len(query.split()) >= 3:
+        with st.spinner("💡 L'assistant réfléchit..."):
+            results = search_faiss(query, top_n=5)
+            context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
+            answer = get_answer(query, context)
+            st.session_state.chat_memory.add_to_memory(query, answer)
+            lire_texte_audio(answer)
+        st.rerun()
 
-query = chat_input(placeholder=placeholder, key=f"custom_input_{st.session_state.lang}", lang=st.session_state.lang)
-if query and len(query.split()) >= 3:
-    with st.spinner("💡 L'assistant réfléchit..."):
-        results = search_faiss(query, top_n=5)
-        context = "\n".join([d for d, _ in results] + st.session_state.chat_memory.get_context())
-        answer = get_answer(query, context)
-        st.session_state.chat_memory.add_to_memory(query, answer)
-        lire_texte_audio(answer)
-    st.rerun()
+process_query()
 
 # Analyse de fichier texte
 if uploaded_file:
